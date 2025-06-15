@@ -21,7 +21,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { signUpSchema, type SignUpFormData } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import {
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Loader2,
+  Target,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -78,16 +85,20 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
   if (success) {
     return (
       <div className="w-full max-w-md mx-auto">
-        <Card>
+        <Card className="border-0 shadow-xl bg-card/50 backdrop-blur-sm">
           <CardContent className="pt-6 text-center">
-            <CheckCircle className="mx-auto h-12 w-12 text-green-500 mb-4" />
-            <CardTitle className="text-2xl mb-2">Account Created!</CardTitle>
-            <CardDescription className="mb-4">
+            <div className="mx-auto w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle className="h-8 w-8 text-green-500" />
+            </div>
+            <CardTitle className="text-2xl mb-2 text-foreground">
+              Account Created!
+            </CardTitle>
+            <CardDescription className="mb-4 text-muted-foreground">
               Your account has been successfully created. Redirecting you to
               your dashboard...
             </CardDescription>
             <div className="flex items-center justify-center">
-              <Loader2 className="h-4 w-4 animate-spin" />
+              <Loader2 className="h-4 w-4 animate-spin text-primary" />
             </div>
           </CardContent>
         </Card>
@@ -97,10 +108,17 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Create account</CardTitle>
-          <CardDescription>Get started with your free account</CardDescription>
+      <Card className="border-0 shadow-xl bg-card/50 backdrop-blur-sm">
+        <CardHeader className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <Target className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-3xl text-foreground">
+            Create account
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Start your habit tracking journey today
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -280,7 +298,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
                 Already have an account?{" "}
                 <Button
                   variant="link"
-                  className="p-0 h-auto font-normal"
+                  className="p-0 h-auto font-normal text-primary hover:text-primary/80"
                   onClick={onToggleMode}
                 >
                   Sign in

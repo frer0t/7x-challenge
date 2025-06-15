@@ -21,7 +21,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { signInSchema, type SignInFormData } from "@/lib/validations/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { AlertCircle, Eye, EyeOff, Loader2 } from "lucide-react";
+import { AlertCircle, Eye, EyeOff, Loader2, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
@@ -66,10 +66,17 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <Card>
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl">Welcome back</CardTitle>
-          <CardDescription>Sign in to your account</CardDescription>
+      <Card className="border-0 shadow-xl bg-card/50 backdrop-blur-sm">
+        <CardHeader className="text-center space-y-4">
+          <div className="mx-auto w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+            <Target className="h-8 w-8 text-primary" />
+          </div>
+          <CardTitle className="text-3xl text-foreground">
+            Welcome back
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Sign in to continue building your habits
+          </CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -152,7 +159,7 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
                 Don't have an account?{" "}
                 <Button
                   variant="link"
-                  className="p-0 h-auto font-normal"
+                  className="p-0 h-auto font-normal text-primary hover:text-primary/80"
                   onClick={onToggleMode}
                 >
                   Sign up
