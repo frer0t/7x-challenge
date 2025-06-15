@@ -16,18 +16,18 @@ export async function middleware(request: NextRequest) {
       });
 
       if (!session) {
-        const loginUrl = new URL("/auth/signin", request.url);
+        const loginUrl = new URL("/auth", request.url);
         loginUrl.searchParams.set("callbackUrl", pathname);
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
-      const loginUrl = new URL("/auth/signin", request.url);
+      const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
   }
 
-  const authRoutes = ["/auth/signin", "/auth/signup"];
+  const authRoutes = ["/auth"];
   const isAuthRoute = authRoutes.includes(pathname);
 
   if (isAuthRoute) {
