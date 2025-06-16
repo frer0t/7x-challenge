@@ -2,10 +2,10 @@
 
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitForm } from "@/components/habits/HabitForm";
+import { HabitsLoadingSkeleton } from "@/components/habits/HabitsLoadingSkeleton";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Category, Habit, HabitFormData } from "@/types";
-import { Plus } from "lucide-react";
+import { Plus, RefreshCw, Target } from "lucide-react";
 import { useEffect, useState } from "react";
 
 const HabitsPage = () => {
@@ -15,13 +15,19 @@ const HabitsPage = () => {
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>();
   const [loading, setLoading] = useState(true);
 
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setError(null);
     try {
       await Promise.all([fetchHabits(), fetchCategories()]);
+    } catch (error) {
+      setError("Failed to load data. Please try again.");
+      console.error("Failed to fetch data:", error);
     } finally {
       setLoading(false);
     }
@@ -60,11 +66,14 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await fetchData();
+        await Promise.all([fetchHabits(), fetchCategories()]);
         setShowHabitForm(false);
+      } else {
+        throw new Error("Failed to create habit");
       }
     } catch (error) {
       console.error("Failed to create habit:", error);
+      setError("Failed to create habit. Please try again.");
     }
   };
 
@@ -79,14 +88,16 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await fetchData();
+        await Promise.all([fetchHabits(), fetchCategories()]);
         setEditingHabit(undefined);
+      } else {
+        throw new Error("Failed to update habit");
       }
     } catch (error) {
       console.error("Failed to update habit:", error);
+      setError("Failed to update habit. Please try again.");
     }
   };
-
   const handleDeleteHabit = async (habitId: string) => {
     try {
       const response = await fetch(`/api/habits/${habitId}`, {
@@ -94,132 +105,144 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await fetchData();
+        await Promise.all([fetchHabits(), fetchCategories()]);
+      } else {
+        throw new Error("Failed to delete habit");
       }
     } catch (error) {
       console.error("Failed to delete habit:", error);
+      setError("Failed to delete habit. Please try again.");
     }
   };
-
   const handleToggleHabit = async (habitId: string) => {
+    const originalHabits = [...habits];
+    const today = new Date().toISOString().split("T")[0];
+
     try {
       const response = await fetch("/api/habits/completions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           habitId,
-          date: new Date().toISOString().split("T")[0],
+          date: today,
           completed: true,
+          completedAt: new Date().toISOString(),
         }),
       });
 
       if (response.ok) {
-        await fetchData();
+        // Refresh to get updated data
+        await Promise.all([fetchHabits(), fetchCategories()]);
+      } else {
+        // Revert optimistic update on error
+        setHabits(originalHabits);
+        throw new Error("Failed to update habit");
       }
     } catch (error) {
+      // Revert optimistic update on error
+      setHabits(originalHabits);
       console.error("Failed to toggle habit:", error);
+      setError("Failed to update habit completion. Please try again.");
     }
   };
 
-  const groupedHabits = categories.reduce((acc, category) => {
-    acc[category.name] = habits.filter(
-      (habit) => habit.categoryId === category.id
-    );
-    return acc;
-  }, {} as Record<string, Habit[]>);
-
-  const uncategorizedHabits = habits.filter((habit) => !habit.categoryId);
-  if (uncategorizedHabits.length > 0) {
-    groupedHabits["Uncategorized"] = uncategorizedHabits;
+  if (loading) {
+    return <HabitsLoadingSkeleton />;
   }
 
-  if (loading) {
+  if (error) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading habits...</div>
+      <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+        <div className="container mx-auto px-4 py-8">
+          <div className="max-w-md mx-auto text-center py-16">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-destructive/10 flex items-center justify-center">
+              <RefreshCw className="w-8 h-8 text-destructive" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Something went wrong</h3>
+            <p className="text-destructive mb-6">{error}</p>
+            <Button onClick={() => window.location.reload()} variant="outline">
+              Reload Page
+            </Button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">My Habits</h1>
-        <Button onClick={() => setShowHabitForm(true)}>
-          <Plus className="w-4 h-4 mr-2" />
-          New Habit
-        </Button>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+      <div className="container mx-auto px-4 py-8">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Habits</h1>
+          <Button onClick={() => setShowHabitForm(true)}>
+            <Plus className="w-4 h-4 mr-2" />
+            New Habit
+          </Button>
+        </div>
 
-      <div className="space-y-6">
-        {Object.entries(groupedHabits).map(([categoryName, categoryHabits]) => (
-          <Card key={categoryName}>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                {categories.find((c) => c.name === categoryName)?.color && (
-                  <div
-                    className="w-4 h-4 rounded-full"
-                    style={{
-                      backgroundColor: categories.find(
-                        (c) => c.name === categoryName
-                      )?.color,
-                    }}
-                  />
-                )}
-                {categoryName}
-                <span className="text-sm font-normal text-muted-foreground">
-                  ({categoryHabits.length} habits)
-                </span>
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                {categoryHabits.map((habit) => (
-                  <HabitCard
-                    key={habit.id}
-                    habit={habit}
-                    onComplete={() => handleToggleHabit(habit.id)}
-                    onEdit={() => setEditingHabit(habit)}
-                    onDelete={() => handleDeleteHabit(habit.id)}
-                  />
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {/* Error Alert */}
+        {error && (
+          <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+            <p className="text-destructive text-sm">{error}</p>
+          </div>
+        )}
 
-        {Object.keys(groupedHabits).length === 0 && (
-          <Card>
-            <CardContent className="text-center py-12">
-              <div className="text-muted-foreground mb-4">
-                No habits found. Start building better habits today!
+        {/* Habits Grid */}
+        <div className={`transition-opacity duration-200 `}>
+          {habits.length > 0 ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+              {habits.map((habit) => (
+                <HabitCard
+                  key={habit.id}
+                  habit={habit}
+                  onComplete={() => handleToggleHabit(habit.id)}
+                  onEdit={() => setEditingHabit(habit)}
+                  onDelete={() => handleDeleteHabit(habit.id)}
+                />
+              ))}
+            </div>
+          ) : (
+            /* Empty State */
+            <div className="text-center py-16">
+              <div className="w-24 h-24 mx-auto mb-6 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex items-center justify-center">
+                <Target className="w-12 h-12 text-primary" />
               </div>
-              <Button onClick={() => setShowHabitForm(true)}>
-                <Plus className="w-4 h-4 mr-2" />
+              <h3 className="text-2xl font-semibold mb-2">No habits yet</h3>
+              <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+                Start building better habits today. Create your first habit and
+                begin your journey to self-improvement.
+              </p>
+              <Button
+                onClick={() => setShowHabitForm(true)}
+                size="lg"
+                className="h-12 px-8"
+              >
+                <Plus className="w-5 h-5 mr-2" />
                 Create Your First Habit
               </Button>
-            </CardContent>
-          </Card>
-        )}
-      </div>
+            </div>
+          )}
+        </div>
 
-      {/* Habit Form Dialog */}
-      <HabitForm
-        habit={editingHabit}
-        categories={categories}
-        onSubmit={editingHabit ? handleUpdateHabit : handleCreateHabit}
-        onCancel={() => {
-          setShowHabitForm(false);
-          setEditingHabit(undefined);
-        }}
-        open={showHabitForm || !!editingHabit}
-        onOpenChange={(open) => {
-          if (!open) {
+        {/* Habit Form Dialog */}
+        <HabitForm
+          habit={editingHabit}
+          categories={categories}
+          onSubmit={editingHabit ? handleUpdateHabit : handleCreateHabit}
+          onCancel={() => {
             setShowHabitForm(false);
             setEditingHabit(undefined);
-          }
-        }}
-      />
+          }}
+          open={showHabitForm || !!editingHabit}
+          onOpenChange={(open) => {
+            if (!open) {
+              setShowHabitForm(false);
+              setEditingHabit(undefined);
+            }
+          }}
+        />
+      </div>
     </div>
   );
 };

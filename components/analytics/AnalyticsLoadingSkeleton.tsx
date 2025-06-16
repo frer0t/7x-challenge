@@ -1,11 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { SkeletonProps } from "@/types";
-
-function Skeleton({ className = "" }: SkeletonProps) {
-  return <div className={`animate-pulse rounded-md bg-muted ${className}`} />;
-}
+import { Skeleton } from "@/components/ui/skeleton";
 
 export function AnalyticsLoadingSkeleton() {
   return (
