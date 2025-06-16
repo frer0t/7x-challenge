@@ -30,7 +30,6 @@ import {
   Loader2,
   Target,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
@@ -40,7 +39,6 @@ export function SignUpForm({ onToggleMode }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -65,11 +63,8 @@ export function SignUpForm({ onToggleMode }: AuthFormProps) {
         if (result.success) {
           setSuccess(true);
           form.reset();
-          // Redirect to sign in or dashboard after successful signup
-          setTimeout(() => {
-            router.push("/dashboard");
-            router.refresh();
-          }, 2000);
+
+          onToggleMode?.();
         } else {
           setError(result.error || "Failed to create account");
         }

@@ -1,6 +1,5 @@
 "use client";
 
-import { signOutAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -8,16 +7,26 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useSession } from "@/lib/auth-client";
+import { signOut, useSession } from "@/lib/auth-client";
 import { Activity, BarChart3, LogOut, Target, User } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 export function Navigation() {
-  const { data: session } = useSession();
+  const { data: session, isPending } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
 
   const isDashboardPage = pathname?.startsWith("/dashboard");
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      router.push("/");
+    } catch (error) {
+      console.error("Sign out error:", error);
+    }
+  };
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -63,7 +72,11 @@ export function Navigation() {
         )}
 
         <div className="flex items-center space-x-4">
-          {session?.user ? (
+          {isPending ? (
+            <div className="flex items-center space-x-2">
+              <div className="h-8 w-8 animate-pulse bg-muted rounded"></div>
+            </div>
+          ) : session?.user ? (
             <>
               {!isDashboardPage && (
                 <Link href="/dashboard">
@@ -77,7 +90,7 @@ export function Navigation() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => signOutAction()}>
+                  <DropdownMenuItem onClick={handleSignOut}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </DropdownMenuItem>

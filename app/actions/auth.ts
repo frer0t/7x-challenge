@@ -6,6 +6,7 @@ import {
   type SignInFormData,
   type SignUpFormData,
 } from "@/lib/validations/auth";
+import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -18,7 +19,6 @@ export async function signInAction(data: SignInFormData) {
       body: validatedData,
       headers: headersList,
     });
-
     return { success: true };
   } catch (error) {
     console.error("Sign in error:", error);
@@ -53,6 +53,8 @@ export async function signUpAction(data: SignUpFormData) {
       headers: headersList,
     });
 
+    revalidatePath("/");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Sign up error:", error);
@@ -83,7 +85,7 @@ export async function signOutAction() {
       headers: headersList,
     });
 
-    redirect("/");
+    revalidatePath("/");
   } catch (error) {
     console.error("Sign out error:", error);
     redirect("/");

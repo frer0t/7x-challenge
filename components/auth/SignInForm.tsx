@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSession } from "@/lib/auth-client";
 import { signInSchema } from "@/lib/validations/auth";
 import { AuthFormProps, SignInFormData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -26,13 +27,12 @@ import { AlertCircle, Eye, EyeOff, Loader2, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
-
 export function SignInForm({ onToggleMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-
+  const { refetch } = useSession();
+  const { push } = useRouter();
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -50,8 +50,8 @@ export function SignInForm({ onToggleMode }: AuthFormProps) {
 
         if (result.success) {
           form.reset();
-          router.push("/dashboard");
-          router.refresh();
+          refetch();
+          push("/dashboard");
         } else {
           setError(result.error || "Failed to sign in");
         }
