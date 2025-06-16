@@ -7,7 +7,7 @@ export function HabitDemo() {
     <Card className="border-0 shadow-2xl bg-white">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
-          Today's Habits
+          Today&apos;s Habits
           <Badge variant="secondary">3/5 Complete</Badge>
         </CardTitle>
       </CardHeader>

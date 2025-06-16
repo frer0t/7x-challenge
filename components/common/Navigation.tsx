@@ -1,5 +1,6 @@
 "use client";
 
+import { signOutAction } from "@/app/actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,12 +8,16 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { signOut, useSession } from "@/lib/auth-client";
-import { LogOut, Target, User } from "lucide-react";
+import { useSession } from "@/lib/auth-client";
+import { Activity, BarChart3, LogOut, Target, User } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 export function Navigation() {
   const { data: session } = useSession();
+  const pathname = usePathname();
+
+  const isDashboardPage = pathname?.startsWith("/dashboard");
 
   return (
     <nav className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
@@ -21,12 +26,50 @@ export function Navigation() {
           <Target className="h-8 w-8 text-primary" />
           <span className="text-2xl font-bold text-foreground">HabitFlow</span>
         </Link>
+
+        {/* Dashboard Navigation */}
+        {session?.user && isDashboardPage && (
+          <div className="flex items-center space-x-2">
+            <Link href="/dashboard/overview">
+              <Button
+                variant={pathname === "/dashboard" ? "default" : "ghost"}
+                size="sm"
+              >
+                <Activity className="w-4 h-4 mr-2" />
+                Overview
+              </Button>
+            </Link>
+            <Link href="/dashboard/habits">
+              <Button
+                variant={pathname === "/dashboard/habits" ? "default" : "ghost"}
+                size="sm"
+              >
+                <Target className="w-4 h-4 mr-2" />
+                My Habits
+              </Button>
+            </Link>
+            <Link href="/dashboard/analytics">
+              <Button
+                variant={
+                  pathname === "/dashboard/analytics" ? "default" : "ghost"
+                }
+                size="sm"
+              >
+                <BarChart3 className="w-4 h-4 mr-2" />
+                Analytics
+              </Button>
+            </Link>
+          </div>
+        )}
+
         <div className="flex items-center space-x-4">
           {session?.user ? (
             <>
-              <Link href="/dashboard">
-                <Button variant="ghost">Dashboard</Button>
-              </Link>
+              {!isDashboardPage && (
+                <Link href="/dashboard">
+                  <Button variant="ghost">Dashboard</Button>
+                </Link>
+              )}
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="icon">
@@ -34,7 +77,7 @@ export function Navigation() {
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => signOut()}>
+                  <DropdownMenuItem onClick={() => signOutAction()}>
                     <LogOut className="mr-2 h-4 w-4" />
                     Sign Out
                   </DropdownMenuItem>

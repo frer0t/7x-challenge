@@ -1,25 +1,16 @@
 "use client";
 
-import { HabitStats } from "@/components/dashboard/HabitStats";
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitForm } from "@/components/habits/HabitForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Category, Habit, HabitFormData, HabitStatsType } from "@/types";
+import { Category, Habit, HabitFormData } from "@/types";
 import { Plus } from "lucide-react";
 import { useEffect, useState } from "react";
 
-const Dashboard = () => {
+const HabitsPage = () => {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
-  const [stats, setStats] = useState<HabitStatsType>({
-    totalHabits: 0,
-    completedToday: 0,
-    currentStreak: 0,
-    longestStreak: 0,
-    completionRate: 0,
-    categoryStats: [],
-  });
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>();
   const [loading, setLoading] = useState(true);
@@ -30,7 +21,7 @@ const Dashboard = () => {
 
   const fetchData = async () => {
     try {
-      await Promise.all([fetchHabits(), fetchCategories(), fetchStats()]);
+      await Promise.all([fetchHabits(), fetchCategories()]);
     } finally {
       setLoading(false);
     }
@@ -57,18 +48,6 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Failed to fetch categories:", error);
-    }
-  };
-
-  const fetchStats = async () => {
-    try {
-      const response = await fetch("/api/habits/stats");
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
-    } catch (error) {
-      console.error("Failed to fetch stats:", error);
     }
   };
 
@@ -142,10 +121,22 @@ const Dashboard = () => {
     }
   };
 
+  const groupedHabits = categories.reduce((acc, category) => {
+    acc[category.name] = habits.filter(
+      (habit) => habit.categoryId === category.id
+    );
+    return acc;
+  }, {} as Record<string, Habit[]>);
+
+  const uncategorizedHabits = habits.filter((habit) => !habit.categoryId);
+  if (uncategorizedHabits.length > 0) {
+    groupedHabits["Uncategorized"] = uncategorizedHabits;
+  }
+
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading overview...</div>
+        <div className="text-lg">Loading habits...</div>
       </div>
     );
   }
@@ -153,7 +144,7 @@ const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Overview</h1>
+        <h1 className="text-3xl font-bold">My Habits</h1>
         <Button onClick={() => setShowHabitForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Habit
@@ -161,31 +152,55 @@ const Dashboard = () => {
       </div>
 
       <div className="space-y-6">
-        <HabitStats stats={stats} />
+        {Object.entries(groupedHabits).map(([categoryName, categoryHabits]) => (
+          <Card key={categoryName}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                {categories.find((c) => c.name === categoryName)?.color && (
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{
+                      backgroundColor: categories.find(
+                        (c) => c.name === categoryName
+                      )?.color,
+                    }}
+                  />
+                )}
+                {categoryName}
+                <span className="text-sm font-normal text-muted-foreground">
+                  ({categoryHabits.length} habits)
+                </span>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {categoryHabits.map((habit) => (
+                  <HabitCard
+                    key={habit.id}
+                    habit={habit}
+                    onComplete={() => handleToggleHabit(habit.id)}
+                    onEdit={() => setEditingHabit(habit)}
+                    onDelete={() => handleDeleteHabit(habit.id)}
+                  />
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Today&apos;s Habits</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {habits.slice(0, 6).map((habit) => (
-                <HabitCard
-                  key={habit.id}
-                  habit={habit}
-                  onComplete={() => handleToggleHabit(habit.id)}
-                  onEdit={() => setEditingHabit(habit)}
-                  onDelete={() => handleDeleteHabit(habit.id)}
-                />
-              ))}
-              {habits.length === 0 && (
-                <div className="col-span-full text-center py-8 text-muted-foreground">
-                  No habits yet. Create your first habit to get started!
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+        {Object.keys(groupedHabits).length === 0 && (
+          <Card>
+            <CardContent className="text-center py-12">
+              <div className="text-muted-foreground mb-4">
+                No habits found. Start building better habits today!
+              </div>
+              <Button onClick={() => setShowHabitForm(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create Your First Habit
+              </Button>
+            </CardContent>
+          </Card>
+        )}
       </div>
 
       {/* Habit Form Dialog */}
@@ -209,4 +224,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default HabitsPage;

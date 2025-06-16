@@ -19,7 +19,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signUpSchema, type SignUpFormData } from "@/lib/validations/auth";
+import { signUpSchema } from "@/lib/validations/auth";
+import { AuthFormProps, SignUpFormData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AlertCircle,
@@ -33,11 +34,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
-interface SignUpFormProps {
-  onToggleMode?: () => void;
-}
-
-export function SignUpForm({ onToggleMode }: SignUpFormProps) {
+export function SignUpForm({ onToggleMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -77,6 +74,7 @@ export function SignUpForm({ onToggleMode }: SignUpFormProps) {
           setError(result.error || "Failed to create account");
         }
       } catch (err) {
+        console.error("Sign up error:", err);
         setError("An unexpected error occurred. Please try again.");
       }
     });

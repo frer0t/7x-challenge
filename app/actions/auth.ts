@@ -47,7 +47,7 @@ export async function signUpAction(data: SignUpFormData) {
     const validatedData = signUpSchema.parse(data);
     const headersList = await headers();
     const { confirmPassword, ...authData } = validatedData;
-
+    console.log("confirmPassword:", confirmPassword);
     await auth.api.signUpEmail({
       body: authData,
       headers: headersList,

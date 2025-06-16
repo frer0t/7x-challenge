@@ -19,18 +19,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { signInSchema, type SignInFormData } from "@/lib/validations/auth";
+import { signInSchema } from "@/lib/validations/auth";
+import { AuthFormProps, SignInFormData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AlertCircle, Eye, EyeOff, Loader2, Target } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
-interface SignInFormProps {
-  onToggleMode?: () => void;
-}
-
-export function SignInForm({ onToggleMode }: SignInFormProps) {
+export function SignInForm({ onToggleMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -59,6 +56,7 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
           setError(result.error || "Failed to sign in");
         }
       } catch (err) {
+        console.error("Sign in error:", err);
         setError("An unexpected error occurred. Please try again.");
       }
     });
@@ -156,7 +154,7 @@ export function SignInForm({ onToggleMode }: SignInFormProps) {
           {onToggleMode && (
             <div className="mt-6 text-center">
               <p className="text-muted-foreground">
-                Don't have an account?{" "}
+                Don&apos;t have an account?{" "}
                 <Button
                   variant="link"
                   className="p-0 h-auto font-normal text-primary hover:text-primary/80"
