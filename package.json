@@ -6,7 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx lib/db/seed-categories.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.1.1",
@@ -21,6 +26,7 @@
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.44.2",
     "lucide-react": "^0.515.0",
+    "nanoid": "^5.1.5",
     "next": "15.3.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",

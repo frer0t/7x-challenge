@@ -8,7 +8,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function Home() {
   return (
-    <div className="bg-gradient-to-br from-background via-primary/5 to-primary/10">
+    <div className="bg-gradient-to-br from-background via-primary/5 to-primary/10 px-8">
       <HeroSection />
       <FeaturePreview />
       <Separator className="my-16" />
