@@ -25,6 +25,8 @@ import {
 import { createHabitSchema } from "@/lib/validations/habits";
 import { Category, CreateHabitData, Habit } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 
 interface HabitFormProps {
@@ -56,6 +58,30 @@ export function HabitForm({
     },
   });
 
+  // Reset form when habit changes
+  useEffect(() => {
+    console.log("HabitForm: habit changed", habit);
+    if (habit) {
+      console.log(
+        "HabitForm: resetting form with categoryId:",
+        habit.categoryId
+      );
+      form.reset({
+        name: habit.name || "",
+        description: habit.description || "",
+        targetFrequency: habit.targetFrequency || 1,
+        categoryId: habit.categoryId || "",
+      });
+    } else {
+      form.reset({
+        name: "",
+        description: "",
+        targetFrequency: 1,
+        categoryId: "",
+      });
+    }
+  }, [habit, form]);
+
   const handleSubmit = async (data: CreateHabitData) => {
     await onSubmit(data);
     onOpenChange?.(false);
@@ -76,7 +102,11 @@ export function HabitForm({
             <FormItem>
               <FormLabel>Habit Name</FormLabel>
               <FormControl>
-                <Input placeholder="e.g., Read for 30 minutes" {...field} />
+                <Input
+                  placeholder="e.g., Read for 30 minutes"
+                  disabled={isLoading}
+                  {...field}
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -92,6 +122,7 @@ export function HabitForm({
               <FormControl>
                 <Input
                   placeholder="Brief description of your habit"
+                  disabled={isLoading}
                   {...field}
                 />
               </FormControl>
@@ -103,34 +134,46 @@ export function HabitForm({
         <FormField
           control={form.control}
           name="categoryId"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Category</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a category" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {categories.map((category) => (
-                    <SelectItem key={category.id} value={category.id}>
-                      <div className="flex items-center space-x-2">
-                        {category.color && (
-                          <div
-                            className="w-3 h-3 rounded-full"
-                            style={{ backgroundColor: category.color }}
-                          />
-                        )}
-                        <span>{category.name}</span>
-                      </div>
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <FormMessage />
-            </FormItem>
-          )}
+          render={({ field }) => {
+            console.log(
+              "Select field value:",
+              field.value,
+              "categories:",
+              categories
+            );
+            return (
+              <FormItem>
+                <FormLabel>Category</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  value={field.value}
+                  disabled={isLoading}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a category" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {categories.map((category) => (
+                      <SelectItem key={category.id} value={category.id}>
+                        <div className="flex items-center space-x-2">
+                          {category.color && (
+                            <div
+                              className="w-3 h-3 rounded-full"
+                              style={{ backgroundColor: category.color }}
+                            />
+                          )}
+                          <span>{category.name}</span>
+                        </div>
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
         />
 
         <FormField
@@ -144,6 +187,7 @@ export function HabitForm({
                   type="number"
                   min="1"
                   max="10"
+                  disabled={isLoading}
                   {...field}
                   onChange={(e) =>
                     field.onChange(parseInt(e.target.value) || 1)
@@ -160,11 +204,13 @@ export function HabitForm({
             type="button"
             variant="outline"
             onClick={handleCancel}
+            disabled={isLoading}
             className="flex-1"
           >
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading} className="flex-1">
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {isLoading ? "Saving..." : habit ? "Update" : "Create"}
           </Button>
         </div>

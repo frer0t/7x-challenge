@@ -23,14 +23,20 @@ const Dashboard = () => {
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>();
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [habitFormLoading, setHabitFormLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
   }, []);
 
   const fetchData = async () => {
+    setError(null);
     try {
       await Promise.all([fetchHabits(), fetchCategories(), fetchStats()]);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      setError("Failed to load dashboard data. Please refresh the page.");
     } finally {
       setLoading(false);
     }
@@ -73,6 +79,7 @@ const Dashboard = () => {
   };
 
   const handleCreateHabit = async (habitData: HabitFormData) => {
+    setHabitFormLoading(true);
     try {
       const response = await fetch("/api/habits", {
         method: "POST",
@@ -86,12 +93,15 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Failed to create habit:", error);
+    } finally {
+      setHabitFormLoading(false);
     }
   };
 
   const handleUpdateHabit = async (habitData: HabitFormData) => {
     if (!editingHabit) return;
 
+    setHabitFormLoading(true);
     try {
       const response = await fetch(`/api/habits/${editingHabit.id}`, {
         method: "PUT",
@@ -105,6 +115,8 @@ const Dashboard = () => {
       }
     } catch (error) {
       console.error("Failed to update habit:", error);
+    } finally {
+      setHabitFormLoading(false);
     }
   };
 
@@ -124,18 +136,41 @@ const Dashboard = () => {
 
   const handleToggleHabit = async (habitId: string) => {
     try {
-      const response = await fetch("/api/habits/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          habitId,
-          date: new Date().toISOString().split("T")[0],
-          completed: true,
-        }),
-      });
+      const habit = habits.find((h) => h.id === habitId);
+      const today = new Date().toISOString().split("T")[0];
 
-      if (response.ok) {
-        await fetchData();
+      if (habit?.isCompletedToday) {
+        const response = await fetch(
+          `/api/habits/completions?habitId=${habitId}&completedAt=${today}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          await fetchData();
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to uncomplete habit:", errorData);
+        }
+      } else {
+        // Complete the habit
+        const response = await fetch("/api/habits/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            habitId,
+            completedAt: today,
+            completedCount: 1,
+          }),
+        });
+
+        if (response.ok) {
+          await fetchData();
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to complete habit:", errorData);
+        }
       }
     } catch (error) {
       console.error("Failed to toggle habit:", error);
@@ -146,6 +181,17 @@ const Dashboard = () => {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Loading overview...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-lg text-red-600 mb-4">{error}</div>
+          <Button onClick={() => window.location.reload()}>Refresh Page</Button>
+        </div>
       </div>
     );
   }
@@ -188,7 +234,6 @@ const Dashboard = () => {
         </Card>
       </div>
 
-      {/* Habit Form Dialog */}
       <HabitForm
         habit={editingHabit}
         categories={categories}
@@ -197,6 +242,7 @@ const Dashboard = () => {
           setShowHabitForm(false);
           setEditingHabit(undefined);
         }}
+        isLoading={habitFormLoading}
         open={showHabitForm || !!editingHabit}
         onOpenChange={(open) => {
           if (!open) {

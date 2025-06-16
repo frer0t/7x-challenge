@@ -20,6 +20,29 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const validatedData = createHabitCompletionSchema.parse(body);
 
+    // Check if completion already exists for today
+    const existingCompletion = await db
+      .select()
+      .from(habitCompletions)
+      .where(
+        and(
+          eq(habitCompletions.habitId, validatedData.habitId),
+          eq(habitCompletions.userId, session.user.id),
+          eq(
+            habitCompletions.completedAt,
+            validatedData.completedAt.toISOString().split("T")[0]
+          )
+        )
+      )
+      .limit(1);
+
+    if (existingCompletion.length > 0) {
+      return NextResponse.json(
+        { error: "Habit already completed for this date" },
+        { status: 409 }
+      );
+    }
+
     const completionId = nanoid();
     const [completion] = await db
       .insert(habitCompletions)

@@ -15,12 +15,20 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    console.log("Fetching stats for user:", session.user.id);
+
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get("days") || "7");
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
 
-    // Get habits with completion data
+    console.log(
+      "Stats period:",
+      days,
+      "days, starting from:",
+      startDate.toISOString().split("T")[0]
+    );
+
     const habitsWithCompletions = await db
       .select({
         id: habits.id,
@@ -162,22 +170,53 @@ export async function GET(request: NextRequest) {
       };
     });
 
+    const today = new Date().toISOString().split("T")[0];
+    const todayCompletions = await db
+      .select({
+        habitId: habitCompletions.habitId,
+      })
+      .from(habitCompletions)
+      .innerJoin(habits, eq(habitCompletions.habitId, habits.id))
+      .where(
+        and(
+          eq(habits.userId, session.user.id),
+          eq(habitCompletions.completedAt, today)
+        )
+      );
+
+    const overallCurrentStreak = Math.round(
+      habitStreaks.reduce((sum, habit) => sum + habit.currentStreak, 0) /
+        habitStreaks.length || 0
+    );
+
+    const overallLongestStreak = Math.max(
+      ...habitStreaks.map((habit) => habit.longestStreak),
+      0
+    );
+    const overallCompletionRate = Math.round(
+      habitStreaks.reduce((sum, habit) => sum + habit.completionRate, 0) /
+        habitStreaks.length || 0
+    );
+
     const stats = {
-      habits: habitStreaks,
+      totalHabits: habitsWithCompletions.length,
+      completedToday: todayCompletions.length,
+      currentStreak: overallCurrentStreak,
+      longestStreak: overallLongestStreak,
+      completionRate: overallCompletionRate,
       categoryStats: categoryStats.map((cat) => ({
-        ...cat,
-        completionRate: Math.round(
-          (Number(cat.totalCompletions) / Number(cat.possibleCompletions)) * 100
+        categoryName: cat.categoryName || "Uncategorized",
+        color: cat.categoryColor || "#6b7280",
+        completed: Number(cat.totalCompletions),
+        total: Number(cat.possibleCompletions),
+        rate: Math.round(
+          (Number(cat.totalCompletions) / Number(cat.possibleCompletions)) *
+            100 || 0
         ),
       })),
-      totalHabits: habitsWithCompletions.length,
-      totalCompletions: recentCompletions.length,
-      averageCompletionRate: Math.round(
-        habitStreaks.reduce((sum, habit) => sum + habit.completionRate, 0) /
-          habitStreaks.length || 0
-      ),
     };
 
+    console.log("Returning stats:", stats);
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Error fetching habit stats:", error);

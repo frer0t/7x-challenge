@@ -39,7 +39,7 @@ export function Navigation() {
         {/* Dashboard Navigation */}
         {session?.user && isDashboardPage && (
           <div className="flex items-center space-x-2">
-            <Link href="/dashboard/overview">
+            <Link href="/dashboard">
               <Button
                 variant={pathname === "/dashboard" ? "default" : "ghost"}
                 size="sm"
