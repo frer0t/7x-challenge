@@ -6,20 +6,20 @@ export function FeaturePreview() {
     <div className="grid md:grid-cols-3 gap-6 mt-16">
       <FeatureCard
         icon={CheckCircle2}
-        title="Track Daily Progress"
-        description="Mark habits as complete with a simple click. Build momentum with visual feedback."
+        title="Daily Habit Completion"
+        description="Mark habits as complete with a simple click. Track across 6 categories with visual feedback."
         iconColor="text-green-600"
       />
       <FeatureCard
         icon={BarChart3}
-        title="Beautiful Analytics"
-        description="Visualize your progress with charts and graphs. See patterns and celebrate wins."
+        title="Comprehensive Analytics"
+        description="View completion rates, category breakdowns, and progress trends with beautiful charts and graphs."
         iconColor="text-blue-600"
       />
       <FeatureCard
         icon={TrendingUp}
-        title="Streak Tracking"
-        description="Build powerful streaks and maintain consistency. Watch your longest streaks grow."
+        title="Streak & Motivation"
+        description="Build powerful streaks and maintain consistency. Monitor current and longest streaks to stay motivated."
         iconColor="text-purple-600"
       />
     </div>

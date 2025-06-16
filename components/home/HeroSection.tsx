@@ -12,13 +12,14 @@ export function HeroSection() {
           Simple & Powerful
         </Badge>
         <h1 className="text-6xl font-bold text-foreground mb-6 leading-tight">
-          Build Better Habits,
-          <span className="text-primary"> One Day at a Time</span>
+          Track Your Daily Habits,
+          <span className="text-primary"> Build Your Best Life</span>
         </h1>
         <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-          Track your daily habits, visualize your progress, and stay motivated
-          with beautiful charts and streak tracking. Transform your life through
-          consistent action.
+          The 7x Challenge helps you create and maintain positive habits across
+          6 key areas: Health, Productivity, Learning, Personal Growth, Social,
+          and Creativity. Track completions, visualize progress, and build
+          lasting streaks.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <Link href="/auth">
