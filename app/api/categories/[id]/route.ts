@@ -5,14 +5,21 @@ import { eq } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const resolvedParams = await params;
+  if (!resolvedParams.id) {
+    return NextResponse.json(
+      { error: "Category ID is required" },
+      { status: 400 }
+    );
+  }
   try {
     const [category] = await db
       .select()
       .from(categories)
-      .where(eq(categories.id, params.id));
+      .where(eq(categories.id, resolvedParams.id));
 
     if (!category) {
       return NextResponse.json(
@@ -33,8 +40,15 @@ export async function GET(
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const resolvedParams = await params;
+  if (!resolvedParams.id) {
+    return NextResponse.json(
+      { error: "Category ID is required" },
+      { status: 400 }
+    );
+  }
   try {
     const body = await request.json();
     const validatedData = updateCategorySchema.parse(body);
@@ -45,7 +59,7 @@ export async function PUT(
         ...validatedData,
         updatedAt: new Date(),
       })
-      .where(eq(categories.id, params.id))
+      .where(eq(categories.id, resolvedParams.id))
       .returning();
 
     if (!updatedCategory) {
@@ -72,13 +86,20 @@ export async function PUT(
 }
 
 export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const resolvedParams = await params;
+  if (!resolvedParams.id) {
+    return NextResponse.json(
+      { error: "Category ID is required" },
+      { status: 400 }
+    );
+  }
   try {
     const [deletedCategory] = await db
       .delete(categories)
-      .where(eq(categories.id, params.id))
+      .where(eq(categories.id, resolvedParams.id))
       .returning();
 
     if (!deletedCategory) {
