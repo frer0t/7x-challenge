@@ -21,6 +21,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(loginUrl);
       }
     } catch (error) {
+      console.error("Error fetching session:", error);
       const loginUrl = new URL("/auth", request.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);

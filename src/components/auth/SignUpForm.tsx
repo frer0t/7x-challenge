@@ -19,6 +19,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSession } from "@/lib/auth-client";
 import { signUpSchema } from "@/lib/validations/auth";
 import { AuthFormProps, SignUpFormData } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +31,7 @@ import {
   Loader2,
   Target,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 
@@ -39,7 +41,8 @@ export function SignUpForm({ onToggleMode }: AuthFormProps) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
   const [isPending, startTransition] = useTransition();
-
+  const { refetch } = useSession();
+  const { push } = useRouter();
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
     defaultValues: {
@@ -63,8 +66,8 @@ export function SignUpForm({ onToggleMode }: AuthFormProps) {
         if (result.success) {
           setSuccess(true);
           form.reset();
-
-          onToggleMode?.();
+          refetch();
+          push("/dashboard");
         } else {
           setError(result.error || "Failed to create account");
         }

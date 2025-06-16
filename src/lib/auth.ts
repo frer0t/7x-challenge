@@ -13,4 +13,5 @@ export const auth = betterAuth({
     enabled: true,
   },
   plugins: [nextCookies()],
+  baseURL: process.env.BETTER_AUTH_URL,
 });

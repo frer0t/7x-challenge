@@ -11,7 +11,7 @@
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
-    "db:seed": "tsx lib/db/seed-categories.ts",
+    "db:seed": "tsx src/lib/db/seed-categories.ts",
     "prepare": "husky"
   },
   "dependencies": {
