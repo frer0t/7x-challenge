@@ -1,6 +1,6 @@
 "use client";
 
-import { HabitStats } from "@/components/dashboard/HabitStats";
+import { DashboardLoadingSkeleton, HabitStats } from "@/components/dashboard";
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitForm } from "@/components/habits/HabitForm";
 import { Button } from "@/components/ui/button";
@@ -178,11 +178,7 @@ const Dashboard = () => {
   };
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Loading overview...</div>
-      </div>
-    );
+    return <DashboardLoadingSkeleton />;
   }
 
   if (error) {
@@ -199,7 +195,7 @@ const Dashboard = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Overview</h1>
+        <h2 className="text-xl font-bold">Overview</h2>
         <Button onClick={() => setShowHabitForm(true)}>
           <Plus className="w-4 h-4 mr-2" />
           New Habit

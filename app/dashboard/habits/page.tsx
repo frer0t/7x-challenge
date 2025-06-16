@@ -174,8 +174,8 @@ const HabitsPage = () => {
       <div className="container mx-auto px-4 py-8">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Habits</h1>
-          <Button onClick={() => setShowHabitForm(true)}>
+          <h2 className="text-xl font-bold">Habits</h2>
+          <Button onClick={() => setShowHabitForm(true)} size={"sm"}>
             <Plus className="w-4 h-4 mr-2" />
             New Habit
           </Button>
