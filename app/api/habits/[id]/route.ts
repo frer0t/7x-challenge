@@ -2,15 +2,12 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { habits } from "@/lib/db/schema";
 import { updateHabitSchema } from "@/lib/validations/habits";
+import { HabitRouteContext } from "@/types";
 import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
-interface Context {
-  params: Promise<{ id: string }>;
-}
-
-export async function PUT(request: NextRequest, context: Context) {
+export async function PUT(request: NextRequest, context: HabitRouteContext) {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),
@@ -47,7 +44,7 @@ export async function PUT(request: NextRequest, context: Context) {
   }
 }
 
-export async function DELETE(_: NextRequest, context: Context) {
+export async function DELETE(_: NextRequest, context: HabitRouteContext) {
   try {
     const session = await auth.api.getSession({
       headers: await headers(),

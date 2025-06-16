@@ -23,21 +23,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createHabitSchema } from "@/lib/validations/habits";
-import { Category, CreateHabitData, Habit } from "@/types";
+import { CreateHabitData, HabitFormProps } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-
-interface HabitFormProps {
-  habit?: Habit;
-  categories: Category[];
-  onSubmit: (data: CreateHabitData) => Promise<void>;
-  onCancel: () => void;
-  isLoading?: boolean;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
 
 export function HabitForm({
   habit,

@@ -7,16 +7,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Habit } from "@/types";
+import { HabitCardProps } from "@/types";
 import { Check, Edit, MoreVertical, Target, Trash2 } from "lucide-react";
 import { useState } from "react";
-
-interface HabitCardProps {
-  habit: Habit;
-  onComplete: (habitId: string) => void;
-  onEdit: (habit: Habit) => void;
-  onDelete: (habitId: string) => void;
-}
 
 export function HabitCard({
   habit,
@@ -37,7 +30,7 @@ export function HabitCard({
 
   return (
     <Card className="w-full">
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 ">
         <CardTitle className="text-sm font-medium">{habit.name}</CardTitle>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

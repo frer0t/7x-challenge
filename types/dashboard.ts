@@ -47,3 +47,44 @@ export interface HabitCompletion {
   completedAt: string;
   completedCount: number;
 }
+
+export interface AnalyticsData {
+  dailyCompletions: Array<{
+    date: string;
+    day: string;
+    completions: number;
+  }>;
+  weeklyTrends: Array<{
+    week: string;
+    weekStart: string;
+    completions: number;
+    average: number;
+  }>;
+  habitPerformance: Array<{
+    name: string;
+    completions: number;
+    target: number;
+    rate: number;
+    category: string;
+    color: string;
+  }>;
+  timeOfDay: Array<{
+    hour: number;
+    time: string;
+    completions: number;
+  }>;
+  summary: {
+    totalCompletions: number;
+    averageDaily: number;
+    bestDay: {
+      date: string;
+      day: string;
+      completions: number;
+    };
+    mostProductiveHour: {
+      hour: number;
+      time: string;
+      completions: number;
+    };
+  };
+}

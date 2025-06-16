@@ -3,11 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { HabitStatsType } from "@/types";
-
-interface HabitStatsProps {
-  stats: HabitStatsType;
-}
+import { HabitStatsProps } from "@/types";
 
 export function HabitStats({ stats }: HabitStatsProps) {
   return (
