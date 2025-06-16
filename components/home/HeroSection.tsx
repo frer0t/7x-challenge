@@ -16,10 +16,8 @@ export function HeroSection() {
           <span className="text-primary"> Build Your Best Life</span>
         </h1>
         <p className="text-xl text-muted-foreground mb-12 max-w-2xl mx-auto leading-relaxed">
-          The 7x Challenge helps you create and maintain positive habits across
-          6 key areas: Health, Productivity, Learning, Personal Growth, Social,
-          and Creativity. Track completions, visualize progress, and build
-          lasting streaks.
+          Transform your daily actions into lasting habits with Habitflow. Track
+          consistently, see real progress, and unlock your full potential.
         </p>
         <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
           <Link href="/auth">

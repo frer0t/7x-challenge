@@ -49,20 +49,20 @@ export const defaultCategories = [
 
 export async function seedCategories() {
   try {
-    console.log("Seeding categories...");
+    console.info("Seeding categories...");
 
     // Check if categories already exist
     const existingCategories = await db.select().from(categories);
 
     if (existingCategories.length > 0) {
-      console.log("Categories already exist, skipping seed");
+      console.info("Categories already exist, skipping seed");
       return;
     }
 
     // Insert default categories
     await db.insert(categories).values(defaultCategories);
 
-    console.log(`Successfully seeded ${defaultCategories.length} categories`);
+    console.info(`Successfully seeded ${defaultCategories.length} categories`);
   } catch (error) {
     console.error("Error seeding categories:", error);
     throw error;
@@ -72,7 +72,7 @@ export async function seedCategories() {
 if (require.main === module) {
   seedCategories()
     .then(() => {
-      console.log("Seed completed");
+      console.info("Seed completed");
       process.exit(0);
     })
     .catch((error) => {

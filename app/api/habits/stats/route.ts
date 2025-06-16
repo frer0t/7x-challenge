@@ -15,19 +15,10 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    console.log("Fetching stats for user:", session.user.id);
-
     const { searchParams } = new URL(request.url);
     const days = parseInt(searchParams.get("days") || "7");
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - days);
-
-    console.log(
-      "Stats period:",
-      days,
-      "days, starting from:",
-      startDate.toISOString().split("T")[0]
-    );
 
     const habitsWithCompletions = await db
       .select({
@@ -155,7 +146,7 @@ export async function GET(request: NextRequest) {
 
       // Calculate longest streak
       for (const date of habitCompletionDates) {
-        console.log("Current :", date);
+        console.info("Current :", date);
         streak++;
         longestStreak = Math.max(longestStreak, streak);
       }
@@ -215,8 +206,6 @@ export async function GET(request: NextRequest) {
         ),
       })),
     };
-
-    console.log("Returning stats:", stats);
     return NextResponse.json(stats);
   } catch (error) {
     console.error("Error fetching habit stats:", error);

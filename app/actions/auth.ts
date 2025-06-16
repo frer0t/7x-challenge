@@ -21,8 +21,6 @@ export async function signInAction(data: SignInFormData) {
     });
     return { success: true };
   } catch (error) {
-    console.error("Sign in error:", error);
-
     if (error instanceof Error) {
       if (error.message.includes("Invalid email or password")) {
         return {
@@ -47,7 +45,7 @@ export async function signUpAction(data: SignUpFormData) {
     const validatedData = signUpSchema.parse(data);
     const headersList = await headers();
     const { confirmPassword, ...authData } = validatedData;
-    console.log("confirmPassword:", confirmPassword);
+    console.info("confirmPassword:", confirmPassword);
     await auth.api.signUpEmail({
       body: authData,
       headers: headersList,
@@ -57,8 +55,6 @@ export async function signUpAction(data: SignUpFormData) {
     revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
-    console.error("Sign up error:", error);
-
     if (error instanceof Error) {
       if (error.message.includes("User already exists")) {
         return {

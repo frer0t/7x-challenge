@@ -50,12 +50,7 @@ export function HabitForm({
 
   // Reset form when habit changes
   useEffect(() => {
-    console.log("HabitForm: habit changed", habit);
     if (habit) {
-      console.log(
-        "HabitForm: resetting form with categoryId:",
-        habit.categoryId
-      );
       form.reset({
         name: habit.name || "",
         description: habit.description || "",
@@ -125,12 +120,6 @@ export function HabitForm({
           control={form.control}
           name="categoryId"
           render={({ field }) => {
-            console.log(
-              "Select field value:",
-              field.value,
-              "categories:",
-              categories
-            );
             return (
               <FormItem>
                 <FormLabel>Category</FormLabel>
