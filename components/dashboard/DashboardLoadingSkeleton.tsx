@@ -1,40 +1,80 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Plus } from "lucide-react";
 
 export function DashboardLoadingSkeleton() {
   return (
-    <div className="container mx-auto px-4 py-8 animate-pulse">
-      {/* Header Skeleton */}
+    <div className="container mx-auto px-4 py-8 animate-in fade-in duration-500">
+      {/* Header Skeleton - Show the actual header content */}
       <div className="flex justify-between items-center mb-6">
-        <Skeleton className="h-9 w-32" /> {/* Overview title */}
-        <Skeleton className="h-10 w-32" /> {/* New Habit button */}
+        <h2 className="text-xl font-bold">Overview</h2>
+        <Button disabled className="opacity-50">
+          <Plus className="w-4 h-4 mr-2" />
+          New Habit
+        </Button>
       </div>
 
       <div className="space-y-6">
         {/* Stats Skeleton */}
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-6">
           {/* Stat Cards */}
-          {Array.from({ length: 4 }).map((_, index) => (
-            <Card key={index} className="animate-pulse">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="w-4 h-4 rounded-full" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-8 w-16 mb-1" />
-                <Skeleton className="h-3 w-20" />
-              </CardContent>
-            </Card>
-          ))}
+          <Card className="animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Total Habits
+              </CardTitle>
+              <div className="w-4 h-4 bg-blue-500 rounded-full" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-16 mb-1" />
+              <Skeleton className="h-3 w-20" />
+            </CardContent>
+          </Card>
+
+          <Card className="animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Completed Today
+              </CardTitle>
+              <div className="w-4 h-4 bg-green-500 rounded-full" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-16 mb-1" />
+              <Skeleton className="h-3 w-20" />
+            </CardContent>
+          </Card>
+
+          <Card className="animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">
+                Current Streak
+              </CardTitle>
+              <div className="w-4 h-4 bg-orange-500 rounded-full" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-16 mb-1" />
+              <Skeleton className="h-3 w-20" />
+            </CardContent>
+          </Card>
+
+          <Card className="animate-pulse">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium">Best Streak</CardTitle>
+              <div className="w-4 h-4 bg-purple-500 rounded-full" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-8 w-16 mb-1" />
+              <Skeleton className="h-3 w-20" />
+            </CardContent>
+          </Card>
 
           {/* Category Statistics Card */}
           <Card className="md:col-span-2 lg:col-span-4 animate-pulse">
             <CardHeader>
-              <CardTitle>
-                <Skeleton className="h-6 w-48" />
-              </CardTitle>
+              <CardTitle>Category Completion Rates</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
@@ -57,18 +97,16 @@ export function DashboardLoadingSkeleton() {
         </div>
 
         {/* Today's Habits Card Skeleton */}
-        <Card className="animate-pulse">
+        <Card>
           <CardHeader>
-            <CardTitle>
-              <Skeleton className="h-6 w-32" />
-            </CardTitle>
+            <CardTitle>Today&apos;s Habits</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {Array.from({ length: 6 }).map((_, index) => (
                 <div
                   key={index}
-                  className="border rounded-lg p-4 space-y-4 bg-gradient-to-br from-background to-muted/20"
+                  className="border rounded-lg p-4 space-y-4 bg-gradient-to-br from-background to-muted/20 animate-pulse"
                   style={{ animationDelay: `${index * 100}ms` }}
                 >
                   {/* Habit Card Header */}

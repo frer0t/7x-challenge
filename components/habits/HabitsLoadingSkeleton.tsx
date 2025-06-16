@@ -1,22 +1,30 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Plus } from "lucide-react";
 
 export function HabitsLoadingSkeleton() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30">
+    <div className="min-h-screen bg-gradient-to-br from-background via-background to-muted/30 animate-in fade-in duration-500">
       <div className="container mx-auto px-4 py-8">
-        {/* Header Skeleton - matches the actual header */}
+        {/* Header - Show actual content instead of skeleton */}
         <div className="flex justify-between items-center mb-6">
-          <Skeleton className="h-9 w-24" /> {/* Habits title */}
-          <Skeleton className="h-10 w-32" /> {/* New Habit button */}
+          <h2 className="text-xl font-bold">Habits</h2>
+          <Button disabled className="opacity-50" size="sm">
+            <Plus className="w-4 h-4 mr-2" />
+            New Habit
+          </Button>
         </div>
 
         {/* Habits Grid Skeleton */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {Array.from({ length: 8 }).map((_, habitIndex) => (
             <div key={habitIndex} className="group">
-              <div className="border-0 bg-gradient-to-br from-background to-muted/20 rounded-lg p-6 space-y-4">
+              <div
+                className="border-0 bg-gradient-to-br from-background to-muted/20 rounded-lg p-6 space-y-4 animate-pulse"
+                style={{ animationDelay: `${habitIndex * 100}ms` }}
+              >
                 {/* Header */}
                 <div className="flex items-start justify-between">
                   <div className="flex items-center gap-3 flex-1">
