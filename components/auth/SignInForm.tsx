@@ -49,9 +49,8 @@ export function SignInForm({ onToggleMode }: AuthFormProps) {
         const result = await signInAction(data);
 
         if (result.success) {
-          form.reset();
-          refetch();
           push("/dashboard");
+          refetch();
         } else {
           setError(result.error || "Failed to sign in");
         }

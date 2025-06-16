@@ -14,7 +14,7 @@ const HabitsPage = () => {
   const [showHabitForm, setShowHabitForm] = useState(false);
   const [editingHabit, setEditingHabit] = useState<Habit | undefined>();
   const [loading, setLoading] = useState(true);
-
+  const [habitFormLoading, setHabitFormLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -58,6 +58,7 @@ const HabitsPage = () => {
   };
 
   const handleCreateHabit = async (habitData: HabitFormData) => {
+    setHabitFormLoading(true);
     try {
       const response = await fetch("/api/habits", {
         method: "POST",
@@ -66,7 +67,7 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await Promise.all([fetchHabits(), fetchCategories()]);
+        await fetchData();
         setShowHabitForm(false);
       } else {
         throw new Error("Failed to create habit");
@@ -74,12 +75,15 @@ const HabitsPage = () => {
     } catch (error) {
       console.error("Failed to create habit:", error);
       setError("Failed to create habit. Please try again.");
+    } finally {
+      setHabitFormLoading(false);
     }
   };
 
   const handleUpdateHabit = async (habitData: HabitFormData) => {
     if (!editingHabit) return;
 
+    setHabitFormLoading(true);
     try {
       const response = await fetch(`/api/habits/${editingHabit.id}`, {
         method: "PUT",
@@ -88,7 +92,7 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await Promise.all([fetchHabits(), fetchCategories()]);
+        await fetchData();
         setEditingHabit(undefined);
       } else {
         throw new Error("Failed to update habit");
@@ -96,6 +100,8 @@ const HabitsPage = () => {
     } catch (error) {
       console.error("Failed to update habit:", error);
       setError("Failed to update habit. Please try again.");
+    } finally {
+      setHabitFormLoading(false);
     }
   };
   const handleDeleteHabit = async (habitId: string) => {
@@ -105,7 +111,7 @@ const HabitsPage = () => {
       });
 
       if (response.ok) {
-        await Promise.all([fetchHabits(), fetchCategories()]);
+        await fetchData();
       } else {
         throw new Error("Failed to delete habit");
       }
@@ -115,32 +121,46 @@ const HabitsPage = () => {
     }
   };
   const handleToggleHabit = async (habitId: string) => {
-    const originalHabits = [...habits];
-    const today = new Date().toISOString().split("T")[0];
-
     try {
-      const response = await fetch("/api/habits/completions", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          habitId,
-          date: today,
-          completed: true,
-          completedAt: new Date().toISOString(),
-        }),
-      });
+      const habit = habits.find((h) => h.id === habitId);
+      const today = new Date().toISOString().split("T")[0];
 
-      if (response.ok) {
-        // Refresh to get updated data
-        await Promise.all([fetchHabits(), fetchCategories()]);
+      if (habit?.isCompletedToday) {
+        const response = await fetch(
+          `/api/habits/completions?habitId=${habitId}&completedAt=${today}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (response.ok) {
+          await fetchData();
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to uncomplete habit:", errorData);
+          setError("Failed to update habit completion. Please try again.");
+        }
       } else {
-        // Revert optimistic update on error
-        setHabits(originalHabits);
-        throw new Error("Failed to update habit");
+        // Complete the habit
+        const response = await fetch("/api/habits/completions", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            habitId,
+            completedAt: today,
+            completedCount: 1,
+          }),
+        });
+
+        if (response.ok) {
+          await fetchData();
+        } else {
+          const errorData = await response.json();
+          console.error("Failed to complete habit:", errorData);
+          setError("Failed to update habit completion. Please try again.");
+        }
       }
     } catch (error) {
-      // Revert optimistic update on error
-      setHabits(originalHabits);
       console.error("Failed to toggle habit:", error);
       setError("Failed to update habit completion. Please try again.");
     }
@@ -234,6 +254,7 @@ const HabitsPage = () => {
             setShowHabitForm(false);
             setEditingHabit(undefined);
           }}
+          isLoading={habitFormLoading}
           open={showHabitForm || !!editingHabit}
           onOpenChange={(open) => {
             if (!open) {
