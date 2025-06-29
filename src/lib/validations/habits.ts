@@ -1,5 +1,24 @@
 import { z } from "zod";
 
+// Individual field schemas for easier use with TanStack Form
+export const habitNameSchema = z
+  .string()
+  .min(1, "Habit name is required")
+  .max(100, "Habit name must be less than 100 characters");
+
+export const habitDescriptionSchema = z
+  .string()
+  .max(500, "Description must be less than 500 characters")
+  .optional();
+
+export const targetFrequencySchema = z
+  .number()
+  .int()
+  .min(1, "Target frequency must be at least 1")
+  .max(10, "Target frequency must be 10 or less");
+
+export const categoryIdSchema = z.string().optional();
+
 // Category validation schemas
 export const createCategorySchema = z.object({
   name: z
@@ -18,17 +37,10 @@ export const updateCategorySchema = createCategorySchema.partial();
 
 // Habit validation schemas
 export const createHabitSchema = z.object({
-  name: z
-    .string()
-    .min(1, "Habit name is required")
-    .max(100, "Habit name must be less than 100 characters"),
-  description: z.string().optional(),
-  categoryId: z.string().optional(),
-  targetFrequency: z
-    .number()
-    .int()
-    .min(1, "Target frequency must be at least 1")
-    .max(10, "Target frequency cannot exceed 10 per day"),
+  name: habitNameSchema,
+  description: habitDescriptionSchema,
+  categoryId: categoryIdSchema,
+  targetFrequency: targetFrequencySchema,
 });
 
 export const updateHabitSchema = createHabitSchema.partial();

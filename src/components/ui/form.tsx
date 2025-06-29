@@ -2,41 +2,46 @@
 
 import type * as LabelPrimitive from "@radix-ui/react-label";
 import { Slot } from "@radix-ui/react-slot";
+import type { ValidationError } from "@tanstack/react-form";
 import * as React from "react";
-import {
-  Controller,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
-  FormProvider,
-  useFormContext,
-  useFormState,
-} from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-const Form = FormProvider;
-
-type FormFieldContextValue<
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = {
-  name: TName;
+// Context for form field
+type FormFieldContextValue = {
+  name: string;
+  error?: string | ValidationError;
+  isValid: boolean;
+  isDirty: boolean;
+  isTouched: boolean;
 };
 
-const FormFieldContext = React.createContext<FormFieldContextValue>(
-  {} as FormFieldContextValue
+const FormFieldContext = React.createContext<FormFieldContextValue | null>(
+  null
 );
 
-const FormField = <
-  TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
->({
-  ...props
-}: ControllerProps<TFieldValues, TName>) => {
+// Form field component for TanStack Form
+interface FormFieldProps {
+  // biome-ignore lint/suspicious/noExplicitAny: Needed for TanStack Form compatibility
+  children: (fieldApi: any) => React.ReactNode;
+  // biome-ignore lint/suspicious/noExplicitAny: Needed for TanStack Form compatibility
+  fieldApi: any;
+}
+
+const FormField = ({ children, fieldApi }: FormFieldProps) => {
+  const error = fieldApi.state.meta.errors?.[0];
+
   return (
-    <FormFieldContext.Provider value={{ name: props.name }}>
-      <Controller {...props} />
+    <FormFieldContext.Provider
+      value={{
+        name: fieldApi.name,
+        error: typeof error === "string" ? error : error?.message,
+        isValid: !fieldApi.state.meta.errors?.length,
+        isDirty: fieldApi.state.meta.isDirty,
+        isTouched: fieldApi.state.meta.isTouched,
+      }}
+    >
+      {children(fieldApi)}
     </FormFieldContext.Provider>
   );
 };
@@ -44,9 +49,6 @@ const FormField = <
 const useFormField = () => {
   const fieldContext = React.useContext(FormFieldContext);
   const itemContext = React.useContext(FormItemContext);
-  const { getFieldState } = useFormContext();
-  const formState = useFormState({ name: fieldContext.name });
-  const fieldState = getFieldState(fieldContext.name, formState);
 
   if (!fieldContext) {
     throw new Error("useFormField should be used within <FormField>");
@@ -60,7 +62,10 @@ const useFormField = () => {
     formItemId: `${id}-form-item`,
     formDescriptionId: `${id}-form-item-description`,
     formMessageId: `${id}-form-item-message`,
-    ...fieldState,
+    error: fieldContext.error,
+    isValid: fieldContext.isValid,
+    isDirty: fieldContext.isDirty,
+    isTouched: fieldContext.isTouched,
   };
 };
 
@@ -137,7 +142,7 @@ function FormDescription({ className, ...props }: React.ComponentProps<"p">) {
 
 function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
   const { error, formMessageId } = useFormField();
-  const body = error ? String(error?.message ?? "") : props.children;
+  const body = error ? String(error) : props.children;
 
   if (!body) {
     return null;
@@ -156,12 +161,11 @@ function FormMessage({ className, ...props }: React.ComponentProps<"p">) {
 }
 
 export {
-  useFormField,
-  Form,
-  FormItem,
-  FormLabel,
   FormControl,
   FormDescription,
-  FormMessage,
   FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  useFormField,
 };
