@@ -1,13 +1,5 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import {
-  AreaChartProps,
-  BarChartProps,
-  ChartContainerProps,
-  LineChartProps,
-  PieChartProps,
-} from "@/types";
 import {
   Area,
   AreaChart,
@@ -24,6 +16,14 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import type {
+  AreaChartProps,
+  BarChartProps,
+  ChartContainerProps,
+  LineChartProps,
+  PieChartProps,
+} from "@/types";
 
 function ChartContainer({ title, children, description }: ChartContainerProps) {
   return (

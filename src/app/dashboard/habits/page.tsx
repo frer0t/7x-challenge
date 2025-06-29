@@ -1,12 +1,12 @@
 "use client";
 
+import { Plus, RefreshCw, Target } from "lucide-react";
+import { useEffect, useState } from "react";
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitForm } from "@/components/habits/HabitForm";
 import { HabitsLoadingSkeleton } from "@/components/habits/HabitsLoadingSkeleton";
 import { Button } from "@/components/ui/button";
-import { Category, Habit, HabitFormData } from "@/types";
-import { Plus, RefreshCw, Target } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Category, Habit, HabitFormData } from "@/types";
 
 const HabitsPage = () => {
   const [habits, setHabits] = useState<Habit[]>([]);

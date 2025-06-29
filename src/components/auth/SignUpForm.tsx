@@ -1,5 +1,17 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  AlertCircle,
+  CheckCircle,
+  Eye,
+  EyeOff,
+  Loader2,
+  Target,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import { useForm } from "react-hook-form";
 import { signUpAction } from "@/app/actions/auth";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
@@ -21,19 +33,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useSession } from "@/lib/auth-client";
 import { signUpSchema } from "@/lib/validations/auth";
-import { AuthFormProps, SignUpFormData } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  AlertCircle,
-  CheckCircle,
-  Eye,
-  EyeOff,
-  Loader2,
-  Target,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
-import { useForm } from "react-hook-form";
+import type { AuthFormProps, SignUpFormData } from "@/types";
 
 export function SignUpForm({ onToggleMode }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);

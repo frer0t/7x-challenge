@@ -1,14 +1,3 @@
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Progress } from "@/components/ui/progress";
-import { HabitCardProps } from "@/types";
 import {
   Check,
   Edit,
@@ -19,6 +8,17 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Progress } from "@/components/ui/progress";
+import type { HabitCardProps } from "@/types";
 
 export function HabitCard({
   habit,
@@ -106,7 +106,7 @@ export function HabitCard({
                 variant="secondary"
                 className="text-xs px-2 py-1"
                 style={{
-                  backgroundColor: habit.category.color + "15",
+                  backgroundColor: `${habit.category.color}15`,
                   color: habit.category.color,
                   border: `1px solid ${habit.category.color}25`,
                 }}
@@ -133,7 +133,7 @@ export function HabitCard({
             value={habit.completionRate || 0}
             className="h-2"
             style={{
-              backgroundColor: habit.category?.color + "20" || "#6366f120",
+              backgroundColor: `${habit.category?.color}20` || "#6366f120",
             }}
           />
         </div>

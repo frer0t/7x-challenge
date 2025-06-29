@@ -1,11 +1,11 @@
+import { and, eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { habits } from "@/lib/db/schema";
 import { updateHabitSchema } from "@/lib/validations/habits";
-import { HabitRouteContext } from "@/types";
-import { and, eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
+import type { HabitRouteContext } from "@/types";
 
 export async function PUT(request: NextRequest, context: HabitRouteContext) {
   try {

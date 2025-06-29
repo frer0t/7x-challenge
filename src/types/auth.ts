@@ -1,5 +1,5 @@
-import { signInSchema, signUpSchema } from "@/lib/validations/auth";
-import { z } from "zod";
+import type { z } from "zod";
+import type { signInSchema, signUpSchema } from "@/lib/validations/auth";
 
 // Inferred types from validation schemas
 export type SignInFormData = z.infer<typeof signInSchema>;

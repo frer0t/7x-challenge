@@ -1,13 +1,13 @@
 "use client";
 
+import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
 import { DashboardLoadingSkeleton, HabitStats } from "@/components/dashboard";
 import { HabitCard } from "@/components/habits/HabitCard";
 import { HabitForm } from "@/components/habits/HabitForm";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Category, Habit, HabitFormData, HabitStatsType } from "@/types";
-import { Plus } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { Category, Habit, HabitFormData, HabitStatsType } from "@/types";
 
 const Dashboard = () => {
   const [habits, setHabits] = useState<Habit[]>([]);

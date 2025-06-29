@@ -1,9 +1,9 @@
+import { and, desc, eq, gte, sql } from "drizzle-orm";
+import { headers } from "next/headers";
+import { type NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/drizzle";
 import { categories, habitCompletions, habits } from "@/lib/db/schema";
-import { and, desc, eq, gte, sql } from "drizzle-orm";
-import { headers } from "next/headers";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   try {

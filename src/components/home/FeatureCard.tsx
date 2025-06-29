@@ -5,7 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { FeatureCardProps } from "@/types";
+import type { FeatureCardProps } from "@/types";
 
 export function FeatureCard({
   icon: Icon,

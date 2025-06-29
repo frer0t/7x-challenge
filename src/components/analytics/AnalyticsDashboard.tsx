@@ -1,5 +1,6 @@
 "use client";
 
+import { Activity, BarChart3, Clock, Target, TrendingUp } from "lucide-react";
 import { AnalyticsCard } from "@/components/analytics/AnalyticsCard";
 import {
   AreaChartCard,
@@ -9,26 +10,34 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { AnalyticsDashboardProps } from "@/types";
-import { Activity, BarChart3, Clock, Target, TrendingUp } from "lucide-react";
+import type { AnalyticsDashboardProps } from "@/types";
 
 export function AnalyticsDashboard({ data }: AnalyticsDashboardProps) {
-  const categoryData = data.habitPerformance.reduce((acc, habit) => {
-    const existing = acc.find((item) => item.name === habit.category);
-    if (existing) {
-      existing.completions += habit.completions;
-      existing.target += habit.target;
-    } else {
-      acc.push({
-        name: habit.category,
-        completions: habit.completions,
-        target: habit.target,
-        value: habit.completions,
-        color: habit.color,
-      });
-    }
-    return acc;
-  }, [] as Array<{ name: string; completions: number; target: number; value: number; color: string }>);
+  const categoryData = data.habitPerformance.reduce(
+    (acc, habit) => {
+      const existing = acc.find((item) => item.name === habit.category);
+      if (existing) {
+        existing.completions += habit.completions;
+        existing.target += habit.target;
+      } else {
+        acc.push({
+          name: habit.category,
+          completions: habit.completions,
+          target: habit.target,
+          value: habit.completions,
+          color: habit.color,
+        });
+      }
+      return acc;
+    },
+    [] as Array<{
+      name: string;
+      completions: number;
+      target: number;
+      value: number;
+      color: string;
+    }>
+  );
 
   const peakHours = data.timeOfDay
     .filter((hour) => hour.completions > 0)

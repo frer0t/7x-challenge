@@ -1,13 +1,13 @@
-import {
+import type { z } from "zod";
+import type {
   createCategorySchema,
   updateCategorySchema,
 } from "@/lib/validations/categories";
-import {
+import type {
   createHabitCompletionSchema,
   createHabitSchema,
   updateHabitSchema,
 } from "@/lib/validations/habits";
-import { z } from "zod";
 
 // Inferred types from validation schemas
 export type CreateHabitData = z.infer<typeof createHabitSchema>;

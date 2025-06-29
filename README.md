@@ -63,7 +63,7 @@ you build better habits and track your progress over time.
 
 ### Development Tools
 
-- **ESLint** - Code linting and formatting
+- **Biome** - Fast code formatting and linting
 - **Husky** - Git hooks for code quality
 - **Drizzle Kit** - Database migrations and schema management
 - **pnpm** - Fast, disk space efficient package manager
@@ -172,7 +172,7 @@ you build better habits and track your progress over time.
 pnpm dev          # Start development server with Turbopack
 pnpm build        # Build for production
 pnpm start        # Start production server
-pnpm lint         # Run ESLint
+pnpm lint         # Run Biome checks
 
 # Database
 pnpm db:generate  # Generate Drizzle migrations
@@ -190,6 +190,7 @@ pnpm db:seed      # Seed default categories
 - [Better Auth](https://www.better-auth.com/) for authentication
 - [Drizzle ORM](https://orm.drizzle.team/) for the type-safe ORM
 - [Neon](https://neon.tech/) for PostgreSQL hosting
+- [Zod](https://zod.dev/) for runtime type validation
 
 ---
 

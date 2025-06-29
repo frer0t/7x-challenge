@@ -1,13 +1,13 @@
 "use client";
 
+import { Eye, RefreshCw } from "lucide-react";
+import { useEffect, useState } from "react";
 import { AnalyticsDashboard } from "@/components/analytics/AnalyticsDashboard";
 import { AnalyticsLoadingSkeleton } from "@/components/analytics/AnalyticsLoadingSkeleton";
 import { demoAnalyticsData } from "@/components/analytics/demoData";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AnalyticsData } from "@/types";
-import { Eye, RefreshCw } from "lucide-react";
-import { useEffect, useState } from "react";
+import type { AnalyticsData } from "@/types";
 
 const AnalyticsPage = () => {
   const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(

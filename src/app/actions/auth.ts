@@ -1,14 +1,14 @@
 "use server";
-import { auth } from "@/lib/auth";
-import {
-  signInSchema,
-  signUpSchema,
-  type SignInFormData,
-  type SignUpFormData,
-} from "@/lib/validations/auth";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { auth } from "@/lib/auth";
+import {
+  type SignInFormData,
+  type SignUpFormData,
+  signInSchema,
+  signUpSchema,
+} from "@/lib/validations/auth";
 
 export async function signInAction(data: SignInFormData) {
   try {

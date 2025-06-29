@@ -1,8 +1,8 @@
+import { nanoid } from "nanoid";
+import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { categories } from "@/lib/db/schema";
 import { createCategorySchema } from "@/lib/validations/categories";
-import { nanoid } from "nanoid";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET() {
   try {

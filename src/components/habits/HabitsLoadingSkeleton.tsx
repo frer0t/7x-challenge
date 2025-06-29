@@ -1,8 +1,8 @@
 "use client";
 
+import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus } from "lucide-react";
 
 export function HabitsLoadingSkeleton() {
   return (

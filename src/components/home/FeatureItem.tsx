@@ -1,4 +1,4 @@
-import { FeatureItemProps } from "@/types";
+import type { FeatureItemProps } from "@/types";
 
 export function FeatureItem({
   icon: Icon,

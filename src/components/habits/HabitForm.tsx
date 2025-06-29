@@ -1,3 +1,7 @@
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -23,11 +27,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { createHabitSchema } from "@/lib/validations/habits";
-import { CreateHabitData, HabitFormProps } from "@/types";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Loader2 } from "lucide-react";
-import { useEffect } from "react";
-import { useForm } from "react-hook-form";
+import type { CreateHabitData, HabitFormProps } from "@/types";
 
 export function HabitForm({
   habit,

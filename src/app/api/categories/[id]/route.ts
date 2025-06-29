@@ -1,8 +1,8 @@
+import { eq } from "drizzle-orm";
+import { type NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db/drizzle";
 import { categories } from "@/lib/db/schema";
 import { updateCategorySchema } from "@/lib/validations/categories";
-import { eq } from "drizzle-orm";
-import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   _: NextRequest,

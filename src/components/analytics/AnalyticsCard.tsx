@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { AnalyticsCardProps } from "@/types";
+import type { AnalyticsCardProps } from "@/types";
 
 export function AnalyticsCard({
   title,
@@ -29,8 +29,8 @@ export function AnalyticsCard({
                 trend.isPositive === false
                   ? "text-red-600"
                   : trend.isPositive === true
-                  ? "text-green-600"
-                  : ""
+                    ? "text-green-600"
+                    : ""
               }
             >
               {trend.isPositive !== undefined && (trend.isPositive ? "+" : "")}

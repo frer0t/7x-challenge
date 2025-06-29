@@ -1,8 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { SignInForm } from "@/components/auth/SignInForm";
 import { SignUpForm } from "@/components/auth/SignUpForm";
-import { useState } from "react";
 
 export default function AuthPage() {
   const [mode, setMode] = useState<"signin" | "signup">("signin");

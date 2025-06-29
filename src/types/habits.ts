@@ -1,5 +1,5 @@
-import { CreateHabitData } from "./api";
-import { Category, Habit, HabitStatsType } from "./dashboard";
+import type { CreateHabitData } from "./api";
+import type { Category, Habit, HabitStatsType } from "./dashboard";
 
 export interface HabitCardProps {
   habit: Habit;

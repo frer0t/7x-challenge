@@ -1,6 +1,6 @@
 "use client";
 
-import { AnalyticsData } from "@/types";
+import type { AnalyticsData } from "@/types";
 
 export const demoAnalyticsData: AnalyticsData = {
   dailyCompletions: [
